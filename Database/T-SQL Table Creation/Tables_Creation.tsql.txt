@@ -1,0 +1,219 @@
+
+
+
+
+
+CREATE DATABASE DentalClinic;
+
+
+USE  DentalClinic;
+
+
+-- Create Tables 
+
+-----> Create People Table
+CREATE TABLE People
+(
+
+	PersonID INT PRIMARY KEY IDENTITY(1,1) ,
+
+	FirstName  NVARCHAR(50)  NOT NULL , 
+	SecondName NVARCHAR(50) NOT NULL , 
+    ThirdName  NVARCHAR(50)  NOT NULL ,
+	LastName   NVARCHAR(50)   NOT NULL ,
+	
+	BirthDate DATE NOT NULL , 
+	Gender BIT NOT NULL , 
+	PhoneNumber NVARCHAR(30) NOT NULL , 
+	Email NVARCHAR(100) NOT NULL , 
+	Address NVARCHAR(150) NOT NULL
+
+);
+
+
+-----> Create Users Table
+
+CREATE TABLE Users 
+(
+	UserID INT PRIMARY KEY IDENTITY(1,1) ,
+	PersonID INT NOT NULL ,
+
+	Username NVARCHAR(50) NOT NULL ,
+	Password NVARCHAR(50) NOT NULL ,
+	IsActive BIT NOT NULL ,
+
+
+	CONSTRAINT FK_Users FOREIGN KEY (PersonID) REFERENCES People(PersonID) ON DELETE CASCADE
+
+);
+
+
+
+
+
+-------> Create Doctors Table 
+
+CREATE TABLE Doctors
+(
+	DoctorID INT PRIMARY KEY IDENTITY(1,1) , 
+	PersonID INT , 
+	Specialization NVARCHAR(50) , 
+
+
+	CONSTRAINT FK_Doctors FOREIGN KEY (PersonID) REFERENCES People(PersonID) ON DELETE CASCADE
+)
+
+
+------> Create Patients Table 
+
+CREATE TABLE Patients
+(
+
+	PatientID INT PRIMARY KEY IDENTITY(1,1) , 
+	PersonID INT NOT NULL ,
+
+	CONSTRAINT FK_Patients FOREIGN KEY (PersonID) REFERENCES People(PersonID) ON DELETE CASCADE
+
+)
+
+
+
+-------> Appointment Status Table 
+
+
+CREATE TABLE AppointmentStatus
+(
+	AppointmentStatusID INT PRIMARY KEY ,
+
+	Description NVARCHAR(50) NOT NULL
+
+)
+
+
+
+-------> Appointments Table
+
+CREATE TABLE Appointments 
+(
+
+	AppointmentID INT PRIMARY KEY IDENTITY(1,1) , 
+
+	PatientID INT , 
+	DoctorID INT , 
+	AppointmentDate DATE NOT NULL , 
+	AppointmentTime TIME NOT NULL , 
+	AppointmentStatusID INT ,
+
+
+
+	CONSTRAINT FK_PatientID FOREIGN KEY (PatientID) REFERENCES Patients(PatientID) , 
+	CONSTRAINT FK_DoctorID FOREIGN KEY  (DoctorID)  REFERENCES Doctors(DoctorID) , 
+	CONSTRAINT FK_AppointmentStatusID FOREIGN KEY (AppointmentStatusID) REFERENCES AppointmentStatus(AppointmentStatusID)
+
+
+
+)
+
+
+--------> Prescriptions Table 
+
+CREATE TABLE Prescriptions
+(
+
+	PrescriptionID INT PRIMARY KEY IDENTITY(1,1) , 
+	MedicationName NVARCHAR(50) NOT NULL , 
+	Dosage NVARCHAR(50) NOT NULL , 
+	Frequency NVARCHAR(50) NOT NULL , 
+	StartDate DATE NOT NULL , 
+	EndDate DATE NOT NULL  ,
+	SpecialInstructions NVARCHAR(50) NOT NULL 
+
+
+)
+
+
+
+-----------> Medical Recrods Table 
+
+
+CREATE TABLE MedicalRecords
+(
+
+	MedicalRecordID INT PRIMARY KEY IDENTITY(1,1) , 
+	AppointmentID INT ,
+	PrescriptionID INT , 
+	Description NVARCHAR(50) NOT NULL , 
+	Diagnosis NVARCHAR(50) NOT NULL , 
+	AdditionalNotes NVARCHAR(50) NOT NULL ,
+
+
+	CONSTRAINT FK_AppointmentID FOREIGN KEY (AppointmentID) REFERENCES Appointments(AppointmentID) ON DELETE CASCADE , 
+	CONSTRAINT FK_PrescriptionID FOREIGN KEY  (PrescriptionID)  REFERENCES Prescriptions(PrescriptionID) ON DELETE CASCADE , 
+
+)
+
+
+
+---------> PaymentMethods Table 
+
+CREATE TABLE PaymentMethods
+(
+	PaymentMethodID INT PRIMARY KEY ,
+	PaymentMethod NVARCHAR(50)
+)
+
+
+
+----------> Payments Table
+
+
+CREATE TABLE Payments 
+(
+
+	PaymentID INT PRIMARY KEY IDENTITY(1,1) , 
+	PaymentDate DATE NOT NULL , 
+	PaidAmount  FLOAT NOT NULL , 
+	PaymentMethodID INT, 
+	AdditionalNotes NVARCHAR(50) ,
+
+	CONSTRAINT FK_PaymentMethodID FOREIGN KEY (PaymentMethodID) REFERENCES PaymentMethods(PaymentMethodID)
+
+
+)
+
+
+
+-------> Add PaymentID col to Appointments Table
+
+ALTER TABLE Appointments
+ADD PaymentID INT
+
+
+ALTER TABLE Appointments
+ADD CONSTRAINT FK_PaymentID
+FOREIGN KEY (PaymentID) REFERENCES Payments(PaymentID)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

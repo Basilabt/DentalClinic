@@ -1,0 +1,102 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+
+
+Table People {
+
+  PersonID int [primary key]
+
+  FirstName nvarchar [not null]
+  SecondName nvarchar [not null]
+  ThirdName nvarchar [not null]
+  LastName nvarchar [not null]
+
+  BirthDate date [not null]
+  Gender bit [not null]
+  PhoneNumber nvarchar [not null]
+  Email nvarchar [not null]
+  Address nvarchar [not null]
+
+}
+
+Table Patients {
+
+  PatientID int [primary key]
+  PersonID int [ref: - People.PersonID]
+
+  
+}
+
+Table Doctors {
+
+  DoctorID int [primary key]
+  PersonID int  [ref: - People.PersonID]
+  Specialization nvarchar [not null]
+
+}
+
+
+Table Appointments {
+
+  AppointmentID int [primary key]
+  PatientID int [ref: > Patients.PatientID]
+  DoctorID int  [ref: > Doctors.DoctorID]
+  AppointmentDate date [not null]
+  AppointmentTime datetime [not null]
+  
+  AppointmentStatusID int [ref: - AppointmentStatus.AppointmentStatusID]
+
+}
+
+Table AppointmentStatus {
+  AppointmentStatusID int [primary key]
+  Description nvarchar [not null]
+}
+
+
+Table MedicalRecords {
+
+  MedicalRecordID int [primary key]
+  AppointmentID int [ref: - Appointments.AppointmentID]
+  PatientID int [ref: - Patients.PatientID]
+  DoctorID int  [ref: - Doctors.DoctorID]
+  Description nvarchar [not null]
+  Diagnosis nvarchar [not null]
+  PrescriptionID int [ref: - Prescriptions.PrescriptionID]
+  AdditionalNotes nvarchar [not null]
+
+
+}
+
+Table Prescriptions {
+
+  PrescriptionID int [primary key]
+  MedicationName nvarchar [not null]
+  Dosage nvarchar [not null]
+  Frequency nvarchar [not null]
+  StartDate date [not null]
+  EndDate date [not null]
+  SpecialInstructions nvarchar
+
+}
+
+
+Table Payments {
+  PaymentID int [primary key]
+  AppointmentID int [ref: - Appointments.AppointmentID]
+  PatientID int [ref: - Patients.PatientID]
+  PaymentDate date [not null]
+  PaidAmount float [not null]
+  PaymentMethodID int [ref: - PaymentMethods.PaymentMethodID]
+  AdditionalNotes nvarchar
+}
+
+Table PaymentMethods {
+
+  PaymentMethodID int [primary key]
+  PaymentMethod nvarchar [not null]
+
+}
+ 
+
